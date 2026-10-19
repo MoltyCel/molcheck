@@ -47,7 +47,7 @@ describe("Ed25519 JWS verdict signing", () => {
 
 describe("did.json JsonWebKey2020 entry is parseable by the resolver", () => {
   // Proves the published did.json convention (JsonWebKey2020 / OKP-Ed25519 JWK)
-  // verifies a MolCheck JWS directly — closing the loop between the .env signing
+  // verifies a JWS signed by MolCheck directly — closing the loop between the .env signing
   // key and the #moltproof-key-1 entry the site serves.
   function keypairWithDidEntry() {
     const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
