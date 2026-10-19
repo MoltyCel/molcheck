@@ -1,6 +1,6 @@
 // HARD SECURITY GATE (spec §HARD SECURITY GATES + cross-review F5/F8).
 //
-// MoltProof accepts ONLY public inputs. This scanner rejects any request whose
+// MolCheck accepts ONLY public inputs. This scanner rejects any request whose
 // keys or values look like a private key / seed / API key BEFORE the value can
 // enter the process, and it NEVER logs or echoes the offending value. Both the
 // HTTP routes and the MCP layer run through this (shared service layer, F10).

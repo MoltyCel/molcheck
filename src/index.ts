@@ -87,5 +87,5 @@ app.onError((err, c) => {
 if (process.env.NODE_ENV !== "test" && process.argv[1]?.endsWith("index.js")) {
   const port = Number(process.env.PORT ?? 3006);
   serve({ fetch: app.fetch, port, hostname: "127.0.0.1" });
-  log("info", { route: "boot", msg: `moltproof listening on ${port} (read-only)` });
+  log("info", { route: "boot", msg: `molcheck listening on ${port} (read-only)` });
 }

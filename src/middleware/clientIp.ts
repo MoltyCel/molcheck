@@ -6,7 +6,7 @@
 //
 // Proxy headers are honoured only when the immediate peer is a trusted proxy.
 // Proxy headers count only when the peer is a trusted proxy: loopback plus
-// RFC1918 by default, MOLTPROOF_TRUSTED_PROXIES takes a comma-separated CIDR
+// RFC1918 by default, MOLCHECK_TRUSTED_PROXIES (legacy MOLTPROOF_TRUSTED_PROXIES) takes a comma-separated CIDR
 // list for anything else.
 
 import type { Context } from 'hono';
@@ -71,7 +71,7 @@ function parseCidrList(raw: string): Cidr[] {
 }
 
 const TRUSTED: Cidr[] = parseCidrList(
-  process.env.MOLTPROOF_TRUSTED_PROXIES || DEFAULT_TRUSTED,
+  process.env.MOLCHECK_TRUSTED_PROXIES || process.env.MOLTPROOF_TRUSTED_PROXIES || DEFAULT_TRUSTED,
 );
 
 export function isTrustedProxy(ip: string | undefined | null): boolean {

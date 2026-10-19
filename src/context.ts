@@ -40,7 +40,7 @@ export function buildContext(env: NodeJS.ProcessEnv = process.env): AppContext {
     store,
     reader,
     didAllowlist,
-    signingKeyPem: env.MOLTPROOF_SIGNING_KEY_PEM || undefined,
+    signingKeyPem: env.MOLCHECK_SIGNING_KEY_PEM || env.MOLTPROOF_SIGNING_KEY_PEM || undefined,
     chainsUsed: SUPPORTED_CHAINS.map((c) => c.id),
   };
 }

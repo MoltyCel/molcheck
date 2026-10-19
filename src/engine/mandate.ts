@@ -100,7 +100,7 @@ export async function resolveMandate(
   if (agentId.startsWith("did:web:")) {
     const url = didWebToUrl(agentId);
     const doc = (await safeFetchJson(url, { allowlist: opts.didAllowlist })) as Record<string, unknown>;
-    // Look for an embedded MoltProof mandate VC in a service entry.
+    // Look for an embedded mandate VC in a service entry (type MoltProofMandate).
     const services = Array.isArray(doc.service) ? (doc.service as Record<string, unknown>[]) : [];
     const svc = services.find((s) => String(s.type ?? "").includes("MoltProofMandate"));
     const vc = svc?.mandate as Record<string, unknown> | undefined;
