@@ -6,7 +6,7 @@ import { verifyPayload, type JwsSignature } from "./sign.js";
 import { buildSigningCore } from "./verdictCore.js";
 
 // POST /verify — recompute a verdict from PUBLIC inputs and, if a signature is
-// supplied, check it against MolCheck's OWN published key (never a key from the
+// supplied, check it against the MolCheck verifier's OWN published key (never a key from the
 // body). Fully offline: no DID/mandate/context fetching happens here (F4). The
 // body is a closed schema; unknown fields are rejected.
 
@@ -18,7 +18,7 @@ export interface VerifyBody {
   agent: string;
   mandate: Record<string, unknown>; // a public AAE VC
   actions: DecodedAction[]; // public, already-decoded on-chain actions
-  signature?: JwsSignature; // optional prior MolCheck signature to check
+  signature?: JwsSignature; // optional prior MolCheck verdict signature to check
 }
 
 /** Strict, closed-schema validation. Rejects unknown top-level keys and any
@@ -57,7 +57,7 @@ export interface RecomputeResult {
 }
 
 /**
- * Recompute a verdict offline. `molcheckPublicKeyPem` is MolCheck's OWN key,
+ * Recompute a verdict offline. `molcheckPublicKeyPem` is the MolCheck verifier's OWN key,
  * resolved from config/did:web by the caller — the body can never choose the key.
  */
 export function recomputeVerdict(body: VerifyBody, molcheckPublicKeyPem?: string): RecomputeResult {
@@ -69,7 +69,7 @@ export function recomputeVerdict(body: VerifyBody, molcheckPublicKeyPem?: string
   let sig: RecomputeResult["signature"] = { present: false, valid: null, note: "no signature supplied" };
   if (body.signature) {
     if (!molcheckPublicKeyPem) {
-      sig = { present: true, valid: null, note: "MolCheck public key not configured; cannot verify (recompute still valid)" };
+      sig = { present: true, valid: null, note: "MolCheck verifier key not configured; cannot verify (recompute still valid)" };
     } else {
       // Reconstruct the SAME public core the service signed (verdictCore) and verify.
       const core = buildSigningCore({

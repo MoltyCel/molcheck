@@ -37,7 +37,7 @@ export async function noSecretsMiddleware(c: Context<AppEnv>, next: Next): Promi
     return c.json(
       {
         error: "secret_shaped_input_rejected",
-        detail: "MolCheck accepts only public inputs (agent address / DID / mandate ref). A secret-shaped field was rejected.",
+        detail: "The MolCheck API accepts only public inputs (agent address / DID / mandate ref). A secret-shaped field was rejected.",
         field: hit.field,
         reason: hit.reason,
       },

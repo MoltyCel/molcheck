@@ -1,6 +1,6 @@
 # data/ — mandate + execution seed (operator-populated)
 
-MolCheck reads committed mandates from `mandates.json` and (for the pre-live
+The MolCheck verifier reads committed mandates from `mandates.json` and (for the pre-live
 demonstrator) decoded execution from `actions.json`. Both ship EMPTY: v0 makes no
 claims it can't back with real data. The demonstrator (fresh ERC-8004 wallet on
 Base + a committed AAE mandate + real trades, incl. one deliberate breach) seeds

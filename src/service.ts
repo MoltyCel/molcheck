@@ -68,7 +68,7 @@ export function makeService(ctx: AppContext) {
     /** recompute + signature check (never gated, offline). */
     verify(rawBody: unknown) {
       const body = validateVerifyBody(rawBody);
-      // MolCheck's own public key would be resolved from config/did:web here;
+      // The MolCheck verifier's own public key would be resolved from config/did:web here;
       // recompute is valid even when the key is not configured.
       return recomputeVerdict(body, ctx.signingKeyPem ? derivePublicPem(ctx.signingKeyPem) : undefined);
     },
@@ -126,7 +126,7 @@ function nowIso(): string {
 }
 
 // Derive the SPKI public PEM from a private PEM (so /verify can check a signature
-// against MolCheck's own key without a separate config entry).
+// against the MolCheck verifier's own key without a separate config entry).
 function derivePublicPem(privatePem: string): string | undefined {
   try {
     const key = createPrivateKey(privatePem);
