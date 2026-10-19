@@ -1,8 +1,10 @@
-# MoltProof
+# MolCheck
+
+Formerly MoltProof (repository `MoltyCel/moltproof`).
 
 **Read-only verifier: did an on-chain trading agent keep its publicly committed mandate?**
 
-MoltProof resolves an agent's on-chain address(es) from its DID / ERC-8004
+MolCheck resolves an agent's on-chain address(es) from its DID / ERC-8004
 identity, reads its public execution within the mandate's validity window, and
 checks each action against a signed public **AAE mandate** (allowed venues,
 position cap, validity). It emits `ADHERENT` / `BREACHED` / `NO_MANDATE` /
@@ -70,7 +72,7 @@ MCP gateway** (`moltrust-mcp-http.service`, `:8002`, reachable at
 read-only pass-throughs to this service's REST API on `127.0.0.1:3006/proof/*`.
 This service's own `/mcp` is **not** exposed via nginx on moltrust.ch — only
 `/proof/ → :3006` is routed; `/mcp` stays pointed at the shared gateway. Run the
-built-in `/mcp` only when self-hosting MoltProof standalone.
+built-in `/mcp` only when self-hosting MolCheck standalone.
 
 ## Develop
 
@@ -118,5 +120,5 @@ Each load-bearing factual claim, with source and date. Nothing ships unverified.
   tests; deploy (nginx route, systemd unit) and the fresh-wallet demonstrator are
   operator steps (see the deploy handoff).
 
-MoltProof verifies **adherence to a committed mandate, not profitability**. No
+MolCheck verifies **adherence to a committed mandate, not profitability**. No
 trading, no advice. Supports Article 12 logging.

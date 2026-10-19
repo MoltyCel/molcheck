@@ -1,4 +1,4 @@
-// MoltProof core types.
+// MolCheck core types.
 //
 // Trust model: a verdict is RECOMPUTABLE from (public chain data + the public
 // mandate). The Ed25519 signature is a portability convenience, never the anchor.

@@ -1,6 +1,6 @@
 import type { ActionEvaluation, MandateConstraints, Tightness, Verdict } from "../types.js";
 
-// The canonical payload that a MoltProof verdict signature is computed over.
+// The canonical payload that a MolCheck verdict signature is computed over.
 //
 // It contains ONLY fields a third party can reconstruct from public inputs (the
 // agent id, the public mandate constraints, and the public on-chain actions):

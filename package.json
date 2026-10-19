@@ -1,5 +1,5 @@
 {
-  "name": "moltproof",
+  "name": "molcheck",
   "version": "0.1.0",
   "description": "Read-only verifier: did an on-chain agent keep its publicly committed AAE mandate? Recomputable from public chain data.",
   "type": "module",
