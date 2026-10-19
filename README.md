@@ -1,6 +1,6 @@
 # MolCheck
 
-Formerly MoltProof (repository `MoltyCel/moltproof`).
+Formerly MoltProof.
 
 **Read-only verifier: did an on-chain trading agent keep its publicly committed mandate?**
 
