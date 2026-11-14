@@ -1,0 +1,21 @@
+{
+  "method": "GET",
+  "path": "/products/ETH-USD/candles",
+  "query": {
+    "end": "1794391260",
+    "granularity": "ONE_MINUTE",
+    "start": "1794391200"
+  },
+  "response": {
+    "candles": [
+      {
+        "close": "2500.00",
+        "high": "2500.00",
+        "low": "2500.00",
+        "open": "2500.00",
+        "start": "1794391200",
+        "volume": "1"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "mandate_id": "pilot-fixture-1",
+  "agent": "did:example:fixture-agent",
+  "quote_currency": "USD",
+  "quote_decimals": 2,
+  "max_order_notional": "100.00",
+  "max_volume_24h": "250.00",
+  "max_loss": "15.00",
+  "baseline": {
+    "as_of": "2026-11-10T00:00:00Z",
+    "holdings": {"USD": "500.00"}
+  }
+}
