@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "path": "/key_permissions",
+  "query": {},
+  "response": {
+    "can_trade": false,
+    "can_transfer": false,
+    "can_view": true,
+    "portfolio_type": "CONSUMER",
+    "portfolio_uuid": "redacted-f5df4c9cd360"
+  }
+}

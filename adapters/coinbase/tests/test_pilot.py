@@ -279,3 +279,81 @@ def test_missing_price_fails_closed(key, mandate):
         build_receipts(mandate, [_fill("x3", "BTC-USD", "BUY", "90000", "0.001",
                                        "2026-11-10T10:00:00Z")],
                        "p", lambda a, m: None, key.sign, "s", "k", {})
+
+
+# ---------------------------------------------------------------- live run 2026-11-16
+# Responses recorded from the pilot portfolio with `--record` (account, order, trade and entry
+# ids replaced). Three market buys placed by hand: 1.50 BTC, 1.50 ETH (filled in two parts),
+# 3.00 BTC, all in USDC. Mandate: 10.00 USDC baseline, 2.00 per order, 5.00 per 24 h,
+# 0.50 loss. Access revoked at 16:50:00Z.
+
+LIVE = HERE / "fixtures" / "live-2026-11-16"
+LIVE_NOW = parse_time("2026-11-16T21:00:00Z")
+LIVE_STOP = parse_time("2026-11-16T16:50:00Z")
+
+
+@pytest.fixture(scope="module")
+def live(key):
+    m = PilotMandate.from_json(json.loads(
+        (HERE / "fixtures" / "live-mandate-2026-11-16.json").read_text()))
+    client = ReadOnlyClient(fixtures.replay(str(LIVE)))
+    return run(client, m, key, signing.default_source_id(key), LIVE_NOW, LIVE_STOP)
+
+
+def test_live_verdicts(live):
+    receipts, summary, _ = live
+    assert summary["fills_seen"] == 4
+    assert [r["molcheck_receipt"]["verdict"] for r in receipts] == \
+        ["PERMIT", "PERMIT", "PERMIT", "DENY"]
+
+
+def test_live_third_order_breaks_order_cap_and_volume(live):
+    receipts = live[0]
+    checks = [r["molcheck_receipt"]["checks"] for r in receipts]
+    assert [c["order_cap"]["value_minor"] for c in checks] == [149, 70, 149, 299]
+    assert all(c["order_cap"]["limit_minor"] == 200 for c in checks)
+    assert [c["volume_24h"]["value_minor"] for c in checks] == [149, 219, 298, 597]
+    assert checks[3]["volume_24h"]["limit_minor"] == 500
+    assert checks[3]["volume_24h"]["window"]["fills_counted"] == 4
+    assert checks[3]["volume_24h"]["window"]["start"] == "2026-11-16T14:00:00.000000Z"
+    assert all(c["loss"]["value_minor"] <= c["loss"]["limit_minor"] for c in checks)
+
+
+def test_live_two_fills_of_one_order_share_the_cap(live):
+    fills = [r["molcheck_receipt"]["fill"] for r in live[0]]
+    assert fills[1]["order_id"] == fills[2]["order_id"]
+    assert len({f["order_id"] for f in fills}) == 3
+
+
+def test_live_status_after_revocation(live):
+    status = live[2]
+    assert status["agent_stopped"]["value"] is True
+    assert status["agent_stopped"]["activity_after_stop"] == 0
+    assert status["open_orders"]["count"] == 0
+    assert sorted(p["asset"] for p in status["open_positions"]["positions"]) == ["BTC", "ETH"]
+
+
+def test_live_receipts_recompute_offline(live, key):
+    trust = signing.trust_list(key, signing.default_source_id(key))
+    for r in live[0]:
+        out = verify_aer(r["record"], r["bundle"], r["mandate"], r["transaction"], trust)
+        assert out.ok, out
+
+
+def test_live_fixtures_carry_no_uuid():
+    import re
+    uuid = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
+                      r"[0-9a-fA-F]{12}")
+    for path in LIVE.glob("*.json"):
+        assert not uuid.search(path.read_text()), path.name
+
+
+def test_recording_replaces_order_trade_entry_ids_and_embedded_uuids(tmp_path):
+    def live_api(method, path, query):
+        return {"fills": [{"order_id": "o-123", "trade_id": "t-456", "entry_id": "abc",
+                           "note": "ref 11111111-2222-3333-4444-555555555555"}]}
+    rec = fixtures.recording(live_api, str(tmp_path))
+    rec("GET", "/orders/historical/fills", {})
+    written = "".join(p.read_text() for p in tmp_path.glob("*.json"))
+    for needle in ('"o-123"', '"t-456"', '"abc"', "11111111-2222"):
+        assert needle not in written, needle

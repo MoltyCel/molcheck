@@ -26,12 +26,20 @@ and nowhere else; the hosted MolCheck verifier never receives it.
 3. Under **Accounts**, select the agent's portfolio.
 4. Leave **View** on. Leave **Trade** and **Transfer** off.
 5. Select **ECDSA** as signature algorithm. Ed25519 keys do not work with this API.
-6. Download the key file and keep it outside any repository, readable only by you:
-   `chmod 600 cdp_api_key.json`.
+6. Leave the IP allowlist empty, or add the address the adapter runs from.
+7. Download the key file and keep it outside any repository, readable only by you:
+   `chmod 600 cdp_api_key.json`. Use the file exactly as downloaded. Its `name` field holds
+   the key name `organizations/<org-id>/apiKeys/<key-id>`, which signs every request; the
+   nickname you typed in the portal does not work there.
 
 The first request of every run is `GET /api/v3/brokerage/key_permissions`. If the key
 reports `can_trade` or `can_transfer` as true, cannot view, or the answer is incomplete, the
 adapter stops with exit code 3 before it reads any trade data.
+
+If this first request ends with `error: HTTP 401 on GET /key_permissions`, Coinbase did not
+accept the key. Check, in this order: the `name` field is the full key name from the
+download, not the nickname; the private key and the name come from the same download; the
+key is not restricted to other IP addresses; the clock of the machine is correct.
 
 ## 2. Install
 
@@ -75,11 +83,11 @@ key. The file is written with mode 0600; the command prints only its key id.
 
 | Field | Meaning |
 |---|---|
-| `quote_currency` | Currency all limits are expressed in. Fills against another quote currency are denied. USD and USDC count as different currencies. |
+| `quote_currency` | Currency all limits are expressed in. Fills against another quote currency are denied. USD and USDC count as different currencies: a portfolio funded with USDC that trades `BTC-USDC` needs `USDC` here. |
 | `max_order_notional` | Largest value of a single order, summed over all its fills. |
 | `max_volume_24h` | Largest traded value, buys and sells together, within any rolling 24 hours. |
 | `max_loss` | Largest drop of the portfolio value below the baseline value. |
-| `baseline.as_of` | Start of the mandate. Fills before this time are ignored. |
+| `baseline.as_of` | Start of the mandate. Fills before this time are ignored. Pick a time after the last deposit into the portfolio. |
 | `baseline.holdings` | What the portfolio held at `as_of`. Assets other than the quote currency are valued with the price at `as_of`. |
 
 ## 5. Run
@@ -170,6 +178,14 @@ separate fields:
 The status is not part of the recomputed verdict; it records what the adapter saw at
 `observed_at`.
 
+## Sharing receipts
+
+The redacted summary printed by `run` and `summary` contains no identifiers and can be
+posted publicly. A receipt is meant for the people who check the agent. It names the
+portfolio only by a hash, but it carries the Coinbase order id and trade id of its fill, so
+that anyone with access to the account can match it to the trade. Share receipts like
+account statements.
+
 ## Limits
 
 - Coinbase does not sign fills. The receipt shows that your adapter key attested these
@@ -188,9 +204,11 @@ The status is not part of the recomputed verdict; it records what the adapter sa
 
 ## Recorded responses
 
-`--record DIR` stores every API response next to the run. Account identifiers (portfolio,
-user, account and order client ids, portfolio names) are replaced with stable placeholders
-before writing. `--fixtures DIR` replays such a folder without network access:
+`--record DIR` stores every API response next to the run. Identifiers (portfolio, user,
+account, asset, order, client order, trade and entry ids, portfolio names, and any other
+UUID in a response) are replaced with stable placeholders before writing; the same id always
+gets the same placeholder, so fills of one order still belong together. Balances, prices and
+sizes stay as they are. Pass the same `--now` to the replay that the recording run used. `--fixtures DIR` replays such a folder without network access:
 
 ```bash
 molcheck-coinbase run --fixtures tests/fixtures/pilot --now 2026-11-12T00:00:00Z \
@@ -206,7 +224,28 @@ pytest
 ```
 
 `tests/fixtures/pilot/` is built by `tests/make_fixtures.py` from the response schemas
-Coinbase documents.
+Coinbase documents. `tests/fixtures/live-2026-11-16/` is the recording of the pilot run
+below.
+
+## Pilot run, 16 November 2026
+
+A View-only key on a separate portfolio funded with 10 USDC. The mandate set 2.00 USDC per
+order, 5.00 USDC per 24 hours and 0.50 USDC loss, with the baseline at 14:00Z. Three market
+buys were placed by hand between 16:46Z and 16:48Z: 1.50 USDC of BTC, 1.50 USDC of ETH
+(filled in two parts) and 3.00 USDC of BTC, the last one above the per-order limit on
+purpose. Access was revoked at 16:50Z and passed as `--agent-stopped-at`.
+
+| Fill | Order | Single order | 24-hour volume | Loss | Verdict |
+|---|---|---|---|---|---|
+| 1 | BTC 1.50 | 1.49 of 2.00 | 1.49 of 5.00 | 0.00 of 0.50 | PERMIT |
+| 2 | ETH 1.50, part 1 | 0.70 of 2.00 | 2.19 of 5.00 | 0.01 of 0.50 | PERMIT |
+| 3 | ETH 1.50, part 2 | 1.49 of 2.00 | 2.98 of 5.00 | 0.01 of 0.50 | PERMIT |
+| 4 | BTC 3.00 | 2.99 of 2.00 | 5.97 of 5.00 | 0.02 of 0.50 | DENY |
+
+Notional excludes commission, so each order counts slightly below the amount spent. The
+status block showed the agent stopped with no activity after 16:50Z, no open orders and two
+open spot positions (BTC, ETH). `moltrust-verify` recomputed all four verdicts offline with
+exit code 0.
 
 ## Secrets
 

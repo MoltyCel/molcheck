@@ -1,0 +1,15 @@
+{
+  "method": "GET",
+  "path": "/orders/historical/batch",
+  "query": {
+    "limit": 250,
+    "order_status": "OPEN"
+  },
+  "response": {
+    "cursor": "",
+    "has_next": false,
+    "orders": [],
+    "proof_token_required": false,
+    "sequence": "0"
+  }
+}
