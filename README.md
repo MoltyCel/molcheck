@@ -74,6 +74,15 @@ This service's own `/mcp` is **not** exposed via nginx on moltrust.ch — only
 `/proof/ → :3006` is routed; `/mcp` stays pointed at the shared gateway. Run the
 built-in `/mcp` only when self-hosting the MolCheck verifier standalone.
 
+## Adapters
+
+`adapters/coinbase/` checks the executed fills of a Coinbase Advanced Trade portfolio that an
+agent trades in against a mandate (single-order cap, rolling 24-hour volume, loss
+threshold) and writes one receipt per fill that `moltrust-verify` recomputes offline. It is
+a separate command-line tool that runs on the portfolio owner's machine with a View-only
+CDP key; the service above never receives that key. See
+[adapters/coinbase/README.md](adapters/coinbase/README.md).
+
 ## Develop
 
 ```bash

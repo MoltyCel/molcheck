@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "molcheck-coinbase"
+version = "0.1.0"
+description = "Read-only MolCheck adapter: checks executed Coinbase Advanced Trade fills against an AAE mandate and issues one offline-recomputable AER receipt per fill."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+  "moltrust-enforce>=0.7.1,<0.8",
+  "cryptography>=42",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+molcheck-coinbase = "molcheck_coinbase.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

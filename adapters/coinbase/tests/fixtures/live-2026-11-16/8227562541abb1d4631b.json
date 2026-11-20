@@ -1,0 +1,29 @@
+{
+  "method": "GET",
+  "path": "/products/ETH-USDC/candles",
+  "query": {
+    "end": "1794847680",
+    "granularity": "ONE_MINUTE",
+    "start": "1794847620"
+  },
+  "response": {
+    "candles": [
+      {
+        "close": "1823.55",
+        "high": "1824.87",
+        "low": "1822.92",
+        "open": "1823.78",
+        "start": "1794847680",
+        "volume": "59.77671317"
+      },
+      {
+        "close": "1823.64",
+        "high": "1823.94",
+        "low": "1821.59",
+        "open": "1821.91",
+        "start": "1794847620",
+        "volume": "82.63365418"
+      }
+    ]
+  }
+}

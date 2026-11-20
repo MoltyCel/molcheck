@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "path": "/portfolios/redacted-0a1b2c3d4e5f",
+  "query": {},
+  "response": {
+    "breakdown": {
+      "futures_positions": [],
+      "perp_positions": [],
+      "portfolio": {
+        "name": "redacted-1111",
+        "type": "CONSUMER",
+        "uuid": "redacted-0a1b2c3d4e5f"
+      },
+      "spot_positions": [
+        {
+          "asset": "USD",
+          "is_cash": true,
+          "total_balance_crypto": "368.26"
+        },
+        {
+          "asset": "ETH",
+          "is_cash": false,
+          "total_balance_crypto": "0.04"
+        },
+        {
+          "asset": "BTC",
+          "is_cash": false,
+          "total_balance_crypto": "0"
+        }
+      ]
+    }
+  }
+}

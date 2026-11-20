@@ -1,0 +1,29 @@
+{
+  "method": "GET",
+  "path": "/products/BTC-USDC/candles",
+  "query": {
+    "end": "1794847680",
+    "granularity": "ONE_MINUTE",
+    "start": "1794847620"
+  },
+  "response": {
+    "candles": [
+      {
+        "close": "64635.39",
+        "high": "64680.24",
+        "low": "64622.63",
+        "open": "64638.58",
+        "start": "1794847680",
+        "volume": "7.79387865"
+      },
+      {
+        "close": "64639.9",
+        "high": "64640",
+        "low": "64565.14",
+        "open": "64574.46",
+        "start": "1794847620",
+        "volume": "6.20642556"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "method": "GET",
+  "path": "/products/BTC-USD/candles",
+  "query": {
+    "end": "1794302160",
+    "granularity": "ONE_MINUTE",
+    "start": "1794302100"
+  },
+  "response": {
+    "candles": [
+      {
+        "close": "90010.00",
+        "high": "90010.00",
+        "low": "90010.00",
+        "open": "90010.00",
+        "start": "1794302100",
+        "volume": "1"
+      }
+    ]
+  }
+}

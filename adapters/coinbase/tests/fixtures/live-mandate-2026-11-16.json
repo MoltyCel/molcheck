@@ -1,0 +1,13 @@
+{
+  "mandate_id": "molcheck-pilot-2026-11-16",
+  "agent": "did:example:molcheck-pilot",
+  "quote_currency": "USDC",
+  "quote_decimals": 2,
+  "max_order_notional": "2.00",
+  "max_volume_24h": "5.00",
+  "max_loss": "0.50",
+  "baseline": {
+    "as_of": "2026-11-16T14:00:00Z",
+    "holdings": {"USDC": "10.00"}
+  }
+}
